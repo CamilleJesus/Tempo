@@ -1,15 +1,20 @@
 package br.uefs.ecomp.tempo.view.controller;
 
 import br.uefs.ecomp.tempo.connection.Conexao;
+
 import java.io.IOException;
+
 import java.net.URL;
 import java.net.UnknownHostException;
 
 import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
 import javafx.application.Platform;
+
 import javafx.concurrent.Task;
+
 import javafx.event.ActionEvent;
 
 import javafx.fxml.Initializable;
@@ -74,7 +79,7 @@ public class TelaRelogioController implements Initializable {
     @FXML
     private Separator separador;
     private int drift = 1000;
-    private Integer id = 0, auxId, contador = 0, segundo = 0, minuto = 0, hora = 0;
+    private Integer id = 0, contador = 0, segundo = 0, minuto = 0, hora = 0;
     private Conexao conexao = Conexao.getInstancia();
 
     public Integer getId() {
@@ -145,11 +150,10 @@ public class TelaRelogioController implements Initializable {
         fieldAlteraSegundo.setText("0");
         fieldDrift.setText("1000");
         
-        
         this.contagem();   //Chama a tarefa
         
         try {
-            this.conexao.enviar("entrei@enviou@"+conexao.getNome());
+            this.conexao.enviar("entrei@enviou@" + this.conexao.getNome());
         } catch (UnknownHostException ex) {
             Logger.getLogger(TelaRelogioController.class.getName()).log(Level.SEVERE, null, ex);
         } catch (IOException ex) {
@@ -158,7 +162,6 @@ public class TelaRelogioController implements Initializable {
         
         ThreadReceber tr = new ThreadReceber(this);
         new Thread(tr).start();
-        
     }
     
     public void contagem() {

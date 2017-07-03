@@ -1,9 +1,11 @@
 package br.uefs.ecomp.tempo.view.controller;
 
 import br.uefs.ecomp.tempo.connection.Conexao;
+
 import java.io.IOException;
+
 import java.net.SocketTimeoutException;
-import java.util.LinkedList;
+
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -26,16 +28,16 @@ public class ThreadReceber implements Runnable {
         while (true) {
 
             try {
-                String s = conexao.receber();
-                String[] comandos = s.split("@");
-                System.out.println(s);
+                String[] comandos = conexao.receber().split("@");
                 System.out.println(comandos[0]);
+                
                 if (comandos[0].equals("entrei")) {
-
                     String acao = comandos[1];
                     String nome = comandos[2];
+                    
                     if (acao.equals("enviou")) {
                         System.out.println("enviou");
+                        
                         if (!nome.equals(conexao.getNome())) {
                             System.out.println(nome);
                             conexao.enviar("entrei@recebeu@"+nome+"@"+relogio.getId());

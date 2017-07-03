@@ -17,7 +17,7 @@ import java.net.UnknownHostException;
  */
 public class Conexao {
     
-    private static Conexao Conexao;    
+    private static Conexao Conexao;
     private final int PORTA = 5000;
     private final String GRUPO = "225.4.5.6";    
     private MulticastSocket multicast;
@@ -100,12 +100,8 @@ public class Conexao {
     public String receber() throws IOException, SocketTimeoutException {
         byte[] buf = new byte[256];
         DatagramPacket pack = new DatagramPacket(buf, buf.length);
-        
-        
-       
-        this.multicast.receive(pack);
-        
-        return  new String(pack.getData()).trim();
+        this.multicast.receive(pack);        
+        return  (new String(pack.getData()).trim());
     }
     
 }

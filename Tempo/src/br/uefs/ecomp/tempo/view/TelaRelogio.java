@@ -1,13 +1,20 @@
 package br.uefs.ecomp.tempo.view;
 
 import br.uefs.ecomp.tempo.connection.Conexao;
+
 import java.io.IOException;
+
 import javafx.application.Application;
 import static javafx.application.Application.launch;
+
 import javafx.fxml.FXMLLoader;
+
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+
 import javafx.stage.Stage;
+
+import javax.swing.JOptionPane;
 
 
 /**
@@ -18,7 +25,6 @@ import javafx.stage.Stage;
  */
 public class TelaRelogio extends Application {
     
-    private static Stage stage;
     /** Método que carrega a tela e inicializa a cena (frame).
      * 
      * @param stage
@@ -26,17 +32,12 @@ public class TelaRelogio extends Application {
      */
     @Override
     public void start(Stage stage) throws Exception {
-        this.stage = stage;
         //Chama o arquivo FXML correpondente:
         Parent root = FXMLLoader.load(getClass().getResource("TelaRelogio.fxml"));      
         Scene scene = new Scene(root);
         stage.setTitle("Tempo em SD");   //Renomeia o frame
         stage.setScene(scene);
         stage.show();
-    }
-    
-    public static Stage getStage(){
-        return stage;
     }
 
     /** Método que inicia o programa.
@@ -46,7 +47,16 @@ public class TelaRelogio extends Application {
      * @throws java.io.IOException
      */
     public static void main(String[] args) throws IOException {
-        launch(args);       
+        Conexao.singleton();   //Cria a conexão
+        
+        if (Conexao.getInstancia() != null) {
+            String id = JOptionPane.showInputDialog(null, "Informe nome: ");
+            Conexao conexao = Conexao.getInstancia();
+            conexao.conectar();   //Conecta
+            conexao.setNome(id);
+            conexao.setMestre(id);            
+            launch(args);   //Inicia a aplicação
+        }      
     }
     
 }
