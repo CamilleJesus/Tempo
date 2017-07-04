@@ -194,11 +194,46 @@ public class TelaRelogioController implements Initializable {
                             contador = 0;
                         }
                         fieldHora.setText(hora.toString());
+                        
+                        if (conexao.getNome().equals(conexao.getMestre())) {
+                            
+                            try {
+                                conexao.enviar("enviaTempo@" + conexao.getNome() + "@" + hora + "@" + contador);
+                            } catch (UnknownHostException ex) {
+                                Logger.getLogger(TelaRelogioController.class.getName()).log(Level.SEVERE, null, ex);
+                            } catch (IOException ex) {
+                                Logger.getLogger(TelaRelogioController.class.getName()).log(Level.SEVERE, null, ex);
+                            }
+                        }                            
                     });
                 }
             }
         };        
         new Thread(task).start();   //Inicia a tarefa
+    }
+    
+    public void atualizaTempo(Integer hora, Integer contador) {
+        this.hora = hora;
+        this.contador = contador;
+        segundo = contador % 60;
+        fieldSegundo.setText(segundo.toString());
+        minuto = contador / 60;
+
+        if (minuto == 60) {
+            minuto = 0;
+        }
+        fieldMinuto.setText(minuto.toString());
+
+        if ((hora == 23) && (contador == 3600)) {   //Final do dia, reinicia toda contagem
+            hora = 0;
+            contador = 0;
+        }
+
+        if (contador == 3600) {   //Final da hora, incrementa a hora
+            hora++;
+            contador = 0;
+        }
+        fieldHora.setText(hora.toString());
     }
     
 }

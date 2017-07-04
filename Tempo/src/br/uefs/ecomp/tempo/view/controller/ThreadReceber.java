@@ -88,7 +88,13 @@ public class ThreadReceber implements Runnable {
                         }
                     }
                    
-                    System.out.println(conexao.getMestre()+"final");
+                    System.out.println("Coordenador: " + conexao.getMestre());
+                } else if (comandos[0].equals("enviaTempo")) {
+                    
+                    if (!comandos[1].equals(conexao.getNome())){
+                        this.relogio.atualizaTempo(Integer.parseInt(comandos[2]), Integer.parseInt(comandos[3]));
+                    }
+                    
                 }
             } catch (SocketTimeoutException exception) {
                 
