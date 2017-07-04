@@ -22,7 +22,8 @@ public class Conexao {
     private final String GRUPO = "225.4.5.6";    
     private MulticastSocket multicast;
     private String nome;
-    private String mestre;
+    private String coordenador;
+    private int idCoordenador = 0;
     
     /** Método que inicializa a classe.
      * 
@@ -31,15 +32,7 @@ public class Conexao {
      */
     public static void singleton() throws UnknownHostException, IOException {
         Conexao = new Conexao();
-    }
-    
-    public void setMestre(String mestre){
-        this.mestre = mestre;
-    }
-    
-    public String getMestre(){
-        return mestre;
-    }
+    }    
     
     /** Método que retorna a instância da classe.
      * 
@@ -48,14 +41,56 @@ public class Conexao {
     public static Conexao getInstancia() {
         return Conexao;
     }
-    
-    public void setNome (String nome){
-        this.nome = nome;
-    }
+        
+    /** Método que retorna o nome do host.
+     * 
+     * @return nome
+     */
     
     public String getNome(){
         return nome;
     }
+    
+    /** Método que altera o nome do host.
+     * 
+     * @param nome 
+     */
+    public void setNome (String nome){
+        this.nome = nome;
+    }
+    
+    /** Método que retorna o coordenador do grupo.
+     * 
+     * @return coordenador
+     */
+    public String getCoordenador() {
+        return this.coordenador;
+    }
+    
+    /** Método que altera o coordenador do grupo.
+     * 
+     * @param coordenador 
+     */
+    public void setCoordenador(String coordenador) {
+        this.coordenador = coordenador;
+    }
+    
+    /** Método que retorna o id do coordenador do grupo.
+     * 
+     * @return idCoordenador
+     */
+    public int getIdCoordenador() {
+        return this.idCoordenador;
+    }
+    
+    /** Método que altera o id do coordenador do grupo.
+     * 
+     * @param idCoordenador 
+     */
+    public void setIdCoordenador(int idCoordenador) {
+        this.idCoordenador = idCoordenador;
+    }
+    
     /** Método que conecta ao grupo.
      * 
      * @throws IOException 

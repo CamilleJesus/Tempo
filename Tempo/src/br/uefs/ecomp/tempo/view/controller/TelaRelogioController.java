@@ -195,7 +195,7 @@ public class TelaRelogioController implements Initializable {
                         }
                         fieldHora.setText(hora.toString());
                         
-                        if (conexao.getNome().equals(conexao.getMestre())) {
+                        if (conexao.getNome().equals(conexao.getCoordenador())) {
                             
                             try {
                                 conexao.enviar("enviaTempo@" + conexao.getNome() + "@" + hora + "@" + contador);

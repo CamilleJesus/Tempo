@@ -3,6 +3,7 @@ package br.uefs.ecomp.tempo.view;
 import br.uefs.ecomp.tempo.connection.Conexao;
 
 import java.io.IOException;
+import java.net.InetAddress;
 
 import javafx.application.Application;
 import static javafx.application.Application.launch;
@@ -54,7 +55,7 @@ public class TelaRelogio extends Application {
             Conexao conexao = Conexao.getInstancia();
             conexao.conectar();   //Conecta
             conexao.setNome(id);
-            conexao.setMestre(id);            
+            conexao.setCoordenador(id);            
             launch(args);   //Inicia a aplicação
         }      
     }
