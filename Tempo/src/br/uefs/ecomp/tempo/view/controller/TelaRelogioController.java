@@ -78,10 +78,11 @@ public class TelaRelogioController implements Initializable {
     private TextField fieldAlteraSegundo;
     @FXML
     private Separator separador;
-    private int drift = 1000;
+    private int drift = 0;
     private Integer id = 0, contador = 0, segundo = 0, minuto = 0, hora = 0;
     private Conexao conexao = Conexao.getInstancia();
-
+    private int mili = 0;
+    
     public Integer getId() {
         return id;
     }
@@ -92,6 +93,10 @@ public class TelaRelogioController implements Initializable {
 
     public Integer getHora() {
         return hora;
+    }
+    
+    public Integer getMili() {
+        return mili;
     }
 
     public void setHora(Integer hora) {
@@ -187,7 +192,24 @@ public class TelaRelogioController implements Initializable {
             protected Object call() throws Exception {
                 
                 while (true) {   //Contagem ilimitada                    
-                    Thread.sleep(drift);   //No caso, correspondente ao tempo de drift
+                    mili = 0;
+                    if (!conexao.getNome().equals(conexao.getCoordenador())) {
+                        if (drift >= 0){
+                            Thread.sleep(drift);
+                        }else{
+                            mili += -drift;
+                        }
+                    }
+                    while (mili < 1000){
+                        Thread.sleep(100);   //No caso, correspondente ao tempo de drift
+                        mili += 100;
+                        if (conexao.getNome().equals(conexao.getCoordenador())) {
+                            
+                            
+                            conexao.enviar("enviaTempo@" + conexao.getNome() + "@" + hora + "@" + contador+ "@" +mili);
+                        }    
+                        System.out.println("milisegundos: "+mili);
+                    }
                     
                     Platform.runLater(() -> {
                         contador++;   //Variável de controle do tempo
@@ -211,26 +233,20 @@ public class TelaRelogioController implements Initializable {
                         }
                         fieldHora.setText(hora.toString());
                         
-                        if (conexao.getNome().equals(conexao.getCoordenador())) {
-                            
-                            try {
-                                conexao.enviar("enviaTempo@" + conexao.getNome() + "@" + hora + "@" + contador);
-                            } catch (UnknownHostException ex) {
-                                Logger.getLogger(TelaRelogioController.class.getName()).log(Level.SEVERE, null, ex);
-                            } catch (IOException ex) {
-                                Logger.getLogger(TelaRelogioController.class.getName()).log(Level.SEVERE, null, ex);
-                            }
-                        }                            
+                                                    
                     });
                 }
             }
+            
         };        
         new Thread(task).start();   //Inicia a tarefa
     }
     
-    public void atualizaTempo(Integer hora, Integer contador) throws InterruptedException {
-        
-        if (((this.hora * 60) + this.contador) <= ((hora * 60) + contador)) {
+    public void atualizaTempo(Integer hora, Integer contador, Integer mili) throws InterruptedException {
+        int tempo1 = (this.hora * 60 *60 *1000) + this.contador*1000 + this.mili;
+        int tempo2 = (hora * 60 *60 *1000) + contador *1000 + mili;
+        if (tempo1 <= tempo2) {
+            this.mili = mili;
             this.hora = hora;
             this.contador = contador;
             this.segundo = contador % 60;
@@ -253,7 +269,8 @@ public class TelaRelogioController implements Initializable {
             this.fieldMinuto.setText(this.minuto.toString());
             this.fieldHora.setText(hora.toString());
         } else {
-            
+            System.err.println("Tempo1: "+tempo1);
+            System.err.println("Tempo2:"+ tempo2);
             try {
                 this.conexao.enviar("chamaEleição@" + this.conexao.getNome());
             } catch (UnknownHostException ex) {

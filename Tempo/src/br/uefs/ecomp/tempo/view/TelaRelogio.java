@@ -52,6 +52,8 @@ public class TelaRelogio extends Application {
         Conexao.singleton();   //Cria a conexão
         
         if (Conexao.getInstancia() != null) {
+            //por setIpMulticast
+            //id = InetAddress.getLocalHost().getHostAddress();
             id = JOptionPane.showInputDialog(null, "Informe nome: ");
             Conexao conexao = Conexao.getInstancia();
             conexao.conectar();   //Conecta

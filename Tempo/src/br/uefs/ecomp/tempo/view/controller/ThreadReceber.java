@@ -17,7 +17,7 @@ import java.util.logging.Logger;
 public class ThreadReceber implements Runnable {
 
     private TelaRelogioController relogio;
-    private Integer maiorHora = 0, maiorContador = 0;
+    private Integer maiorHora = 0, maiorContador = 0, maiorMili = 0;
     private String concorrente;
 
     public ThreadReceber(TelaRelogioController relogio) {
@@ -93,23 +93,25 @@ public class ThreadReceber implements Runnable {
                 } else if (comandos[0].equals("enviaTempo")) {
                     
                     if (!comandos[1].equals(conexao.getNome())){
-                        this.relogio.atualizaTempo(Integer.parseInt(comandos[2]), Integer.parseInt(comandos[3]));
+                        this.relogio.atualizaTempo(Integer.parseInt(comandos[2]), Integer.parseInt(comandos[3]), Integer.parseInt(comandos[4]));
                     }                    
                 } else if (comandos[0].equals("chamaEleição")) {      
-                    conexao.enviar("concorreEleição@" + comandos[1] + "@" + conexao.getNome() + "@" + this.relogio.getId() + "@" + this.relogio.getHora() + "@" + this.relogio.getContador());
+                    conexao.enviar("concorreEleição@" + comandos[1] + "@" + conexao.getNome() + "@" + this.relogio.getId() + "@" + this.relogio.getHora() + "@" + this.relogio.getContador() + "@" + this.relogio.getMili());
                 } else if (comandos[0].equals("concorreEleição")) {
                     String nomeChamouEleicao = comandos[1];
                     String nome = comandos[2];
                     Integer id = Integer.parseInt(comandos[3]);
                     Integer hora = Integer.parseInt(comandos[4]);
                     Integer contador = Integer.parseInt(comandos[5]);
+                    Integer mili = Integer.parseInt(comandos[6]);
                     
                     if (nomeChamouEleicao.equals(conexao.getNome())) {
                         
-                        if (((hora * 60) + contador) > ((this.maiorHora * 60) + this.maiorContador)) {
+                        if (((hora * 60 * 60 * 1000) + contador*1000+mili) > ((this.maiorHora * 60* 60 * 1000) + this.maiorContador*1000+this.maiorMili)) {
                             this.maiorHora = hora;
                             this.maiorContador = contador;
                             this.concorrente = nome;
+                            this.maiorMili = mili;
                             conexao.setCoordenador(nome);
                             conexao.setIdCoordenador(id);
                             conexao.enviar("atualizaCoordenador@" + nomeChamouEleicao + "@" + nome + "@" + id);
