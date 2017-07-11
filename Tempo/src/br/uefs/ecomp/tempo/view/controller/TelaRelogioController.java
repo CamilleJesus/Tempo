@@ -78,7 +78,7 @@ public class TelaRelogioController implements Initializable {
     private TextField fieldAlteraSegundo;
     @FXML
     private Separator separador;
-    private int drift = 1000;
+    private int drift = 0;
     private Integer id = 0, contador = 0, segundo = 0, minuto = 0, hora = 0;
     private Conexao conexao = Conexao.getInstancia();
 
@@ -116,21 +116,32 @@ public class TelaRelogioController implements Initializable {
         String fieldh = fieldAlteraHora.getText();
         String fieldm = fieldAlteraMinuto.getText();
         String fields = fieldAlteraSegundo.getText();
+        Integer h = Integer.parseInt(fieldh);
+        Integer m = Integer.parseInt(fieldm);
+        Integer s = Integer.parseInt(fields);
         
         //Se houver tempo:
         if ((!(fieldh.equals(""))) && (!(fieldm.equals(""))) && (!(fields.equals("")))) {
             
             if ((!(fieldh.equals(" "))) && (!(fieldm.equals(" "))) && (!(fields.equals(" ")))) {
-                fieldHora.setText(fieldh);
-                hora = Integer.parseInt(fieldh);
-                fieldMinuto.setText(fieldm);
-                fieldSegundo.setText(fields);
                 
-                //Condição de modificação da variável contadora:
-                if (fieldm.equals("0")) {
-                    contador = Integer.parseInt(fields);
-                } else {
-                    contador = (Integer.parseInt(fieldm) * 60) + Integer.parseInt(fields);
+                //Se os valores estiverem dentro dos limites corretos:
+                if (((h >= 0) && (h <=23)) && ((m >= 0) && (m <= 59)) && ((s >=0) && (s <= 59))) {
+                    
+                    //Se o valor inserido for maior que o atual:
+                    if (((h * 3600) + (m * 60) + s) > ((this.hora * 3600) + (this.minuto * 60) + this.segundo)) {
+                        this.fieldHora.setText(fieldh);
+                        this.hora = h;
+                        this.fieldMinuto.setText(fieldm);
+                        this.fieldSegundo.setText(fields);
+
+                        //Condição de modificação da variável contadora:
+                        if (fieldm.equals("0")) {
+                            this.contador = s;
+                        } else {
+                            this.contador = (m * 60) + s;
+                        }
+                    }
                 }
             }
         }
@@ -145,10 +156,14 @@ public class TelaRelogioController implements Initializable {
     void clicaAlterarDrift(ActionEvent event) {
         String field = fieldDrift.getText();
         
-        //Se houver drift:
-        if ((!(field.equals(""))) && (!(field.equals(" "))) && (!(field.equals("0")))) {
-            drift = Integer.parseInt(field);   //Modifica o valor
-        }
+        if (!conexao.getNome().equals(conexao.getCoordenador())) {
+            
+            //Se houver drift:
+            if ((!(field.equals(""))) && (!(field.equals(" "))) && (!(field.equals("0")))) {
+                drift = Integer.parseInt(field);   //Modifica o valor
+            }
+        }        
+        
     }
     
     /** Método inicial de carregamento da tela.
@@ -187,7 +202,7 @@ public class TelaRelogioController implements Initializable {
             protected Object call() throws Exception {
                 
                 while (true) {   //Contagem ilimitada                    
-                    Thread.sleep(drift);   //No caso, correspondente ao tempo de drift
+                    Thread.sleep(1000);   //No caso, correspondente ao tempo de drift                   
                     
                     Platform.runLater(() -> {
                         contador++;   //Variável de controle do tempo

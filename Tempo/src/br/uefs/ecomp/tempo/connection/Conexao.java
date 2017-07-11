@@ -19,7 +19,7 @@ public class Conexao {
     
     private static Conexao Conexao;
     private final int PORTA = 5000;
-    private final String GRUPO = "225.4.5.6";    
+    private final String GRUPO = "225.4.5.9";    
     private MulticastSocket multicast;
     private String nome;
     private String coordenador;
