@@ -5,6 +5,7 @@ import br.uefs.ecomp.tempo.connection.Conexao;
 import java.io.IOException;
 
 import java.net.SocketTimeoutException;
+import java.net.UnknownHostException;
 
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -16,6 +17,8 @@ import java.util.logging.Logger;
 public class ThreadReceber implements Runnable {
 
     private TelaRelogioController relogio;
+    private Integer maiorHora = 0, maiorContador = 0;
+    private String concorrente;
 
     public ThreadReceber(TelaRelogioController relogio) {
         this.relogio = relogio;
@@ -92,14 +95,49 @@ public class ThreadReceber implements Runnable {
                     if (!comandos[1].equals(conexao.getNome())){
                         this.relogio.atualizaTempo(Integer.parseInt(comandos[2]), Integer.parseInt(comandos[3]));
                     }                    
+                } else if (comandos[0].equals("chamaEleição")) {      
+                    conexao.enviar("concorreEleição@" + comandos[1] + "@" + conexao.getNome() + "@" + this.relogio.getId() + "@" + this.relogio.getHora() + "@" + this.relogio.getContador());
+                } else if (comandos[0].equals("concorreEleição")) {
+                    String nomeChamouEleicao = comandos[1];
+                    String nome = comandos[2];
+                    Integer id = Integer.parseInt(comandos[3]);
+                    Integer hora = Integer.parseInt(comandos[4]);
+                    Integer contador = Integer.parseInt(comandos[5]);
+                    
+                    if (nomeChamouEleicao.equals(conexao.getNome())) {
+                        
+                        if (((hora * 60) + contador) > ((this.maiorHora * 60) + this.maiorContador)) {
+                            this.maiorHora = hora;
+                            this.maiorContador = contador;
+                            this.concorrente = nome;
+                            conexao.setCoordenador(nome);
+                            conexao.setIdCoordenador(id);
+                            conexao.enviar("atualizaCoordenador@" + nomeChamouEleicao + "@" + nome + "@" + id);
+                        }
+                    }
+                } else if (comandos[0].equals("atualizaCoordenador")) {
+                    
+                    if (!comandos[1].equals(conexao.getNome())) {
+                        conexao.setCoordenador(comandos[2]);
+                        conexao.setIdCoordenador(Integer.parseInt(comandos[3]));
+                    }
                 }
                 System.out.println("Nome: " + conexao.getNome());
                 System.out.println("Id: " + relogio.getId());
                 System.out.println("Coordenador: " + conexao.getCoordenador());
-            } catch (SocketTimeoutException exception) {                
-                System.out.println(relogio.getId());
+            } catch (SocketTimeoutException exception) {
+                
+                try {
+                    conexao.enviar("chamaEleição@" + conexao.getNome());
+                } catch (UnknownHostException ex) {
+                    Logger.getLogger(ThreadReceber.class.getName()).log(Level.SEVERE, null, ex);
+                } catch (IOException ex) {
+                    Logger.getLogger(ThreadReceber.class.getName()).log(Level.SEVERE, null, ex);
+                }
             } catch (IOException exception) {
                 Logger.getLogger(ThreadReceber.class.getName()).log(Level.SEVERE, null, exception);
+            } catch (InterruptedException ex) {
+                Logger.getLogger(ThreadReceber.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
     }

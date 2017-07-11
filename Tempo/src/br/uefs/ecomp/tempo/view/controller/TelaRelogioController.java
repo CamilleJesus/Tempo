@@ -89,6 +89,22 @@ public class TelaRelogioController implements Initializable {
     public void setId(int id) {
         this.id = id;
     }
+
+    public Integer getHora() {
+        return hora;
+    }
+
+    public void setHora(Integer hora) {
+        this.hora = hora;
+    }
+
+    public Integer getContador() {
+        return contador;
+    }
+
+    public void setContador(Integer contador) {
+        this.contador = contador;
+    }
     
     /** Método que libera o evento do botão de alterar tempo, que modifica o horário
      * do relógio em tempo de execução.
@@ -148,7 +164,7 @@ public class TelaRelogioController implements Initializable {
         fieldAlteraHora.setText("0");
         fieldAlteraMinuto.setText("0");
         fieldAlteraSegundo.setText("0");
-        fieldDrift.setText("1000");
+        fieldDrift.setText("0");
         
         this.contagem();   //Chama a tarefa
         
@@ -170,9 +186,9 @@ public class TelaRelogioController implements Initializable {
             @Override
             protected Object call() throws Exception {
                 
-                while (true) {   //Contagem ilimitada
+                while (true) {   //Contagem ilimitada                    
                     Thread.sleep(drift);   //No caso, correspondente ao tempo de drift
-
+                    
                     Platform.runLater(() -> {
                         contador++;   //Variável de controle do tempo
                         segundo = contador % 60;
@@ -212,28 +228,40 @@ public class TelaRelogioController implements Initializable {
         new Thread(task).start();   //Inicia a tarefa
     }
     
-    public void atualizaTempo(Integer hora, Integer contador) {
-        this.hora = hora;
-        this.contador = contador;
-        segundo = contador % 60;
-        fieldSegundo.setText(segundo.toString());
-        minuto = contador / 60;
+    public void atualizaTempo(Integer hora, Integer contador) throws InterruptedException {
+        
+        if (((this.hora * 60) + this.contador) <= ((hora * 60) + contador)) {
+            this.hora = hora;
+            this.contador = contador;
+            this.segundo = contador % 60;
+            this.minuto = contador / 60;
 
-        if (minuto == 60) {
-            minuto = 0;
-        }
-        fieldMinuto.setText(minuto.toString());
+            if (this.minuto == 60) {
+                this.minuto = 0;
+            }
 
-        if ((hora == 23) && (contador == 3600)) {   //Final do dia, reinicia toda contagem
-            hora = 0;
-            contador = 0;
-        }
+            if ((hora == 23) && (contador == 3600)) {   //Final do dia, reinicia toda contagem
+                hora = 0;
+                contador = 0;
+            }
 
-        if (contador == 3600) {   //Final da hora, incrementa a hora
-            hora++;
-            contador = 0;
-        }
-        fieldHora.setText(hora.toString());
+            if (contador == 3600) {   //Final da hora, incrementa a hora
+                hora++;
+                contador = 0;
+            }
+            this.fieldSegundo.setText(this.segundo.toString());
+            this.fieldMinuto.setText(this.minuto.toString());
+            this.fieldHora.setText(hora.toString());
+        } else {
+            
+            try {
+                this.conexao.enviar("chamaEleição@" + this.conexao.getNome());
+            } catch (UnknownHostException ex) {
+                Logger.getLogger(TelaRelogioController.class.getName()).log(Level.SEVERE, null, ex);
+            } catch (IOException ex) {
+                Logger.getLogger(TelaRelogioController.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }        
     }
     
 }

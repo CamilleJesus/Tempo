@@ -25,6 +25,7 @@ import javax.swing.JOptionPane;
  * @author Camille Jesus
  */
 public class TelaRelogio extends Application {
+    private static String id;
     
     /** Método que carrega a tela e inicializa a cena (frame).
      * 
@@ -36,7 +37,7 @@ public class TelaRelogio extends Application {
         //Chama o arquivo FXML correpondente:
         Parent root = FXMLLoader.load(getClass().getResource("TelaRelogio.fxml"));      
         Scene scene = new Scene(root);
-        stage.setTitle("Tempo em SD");   //Renomeia o frame
+        stage.setTitle("Tempo em SD" + " <" + id +  "> ");   //Renomeia o frame
         stage.setScene(scene);
         stage.show();
     }
@@ -51,11 +52,11 @@ public class TelaRelogio extends Application {
         Conexao.singleton();   //Cria a conexão
         
         if (Conexao.getInstancia() != null) {
-            String id = JOptionPane.showInputDialog(null, "Informe nome: ");
+            id = JOptionPane.showInputDialog(null, "Informe nome: ");
             Conexao conexao = Conexao.getInstancia();
             conexao.conectar();   //Conecta
             conexao.setNome(id);
-            conexao.setCoordenador(id);            
+            conexao.setCoordenador(id);     
             launch(args);   //Inicia a aplicação
         }      
     }
