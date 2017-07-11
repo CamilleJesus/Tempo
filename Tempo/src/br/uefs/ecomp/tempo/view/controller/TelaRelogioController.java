@@ -78,12 +78,12 @@ public class TelaRelogioController implements Initializable {
     private TextField fieldAlteraSegundo;
     @FXML
     private Separator separador;
-    private int drift = 0;
+    private int drift = 1000;
     private Integer id = 0, contador = 0, segundo = 0, minuto = 0, hora = 0;
     private Conexao conexao = Conexao.getInstancia();
 
     public Integer getId() {
-        return id;
+        return this.id;
     }
     
     public void setId(int id) {
@@ -91,7 +91,7 @@ public class TelaRelogioController implements Initializable {
     }
 
     public Integer getHora() {
-        return hora;
+        return this.hora;
     }
 
     public void setHora(Integer hora) {
@@ -99,7 +99,7 @@ public class TelaRelogioController implements Initializable {
     }
 
     public Integer getContador() {
-        return contador;
+        return this.contador;
     }
 
     public void setContador(Integer contador) {
@@ -154,16 +154,12 @@ public class TelaRelogioController implements Initializable {
      */
     @FXML
     void clicaAlterarDrift(ActionEvent event) {
-        String field = fieldDrift.getText();
-        
-        if (!conexao.getNome().equals(conexao.getCoordenador())) {
+        String field = this.fieldDrift.getText();
             
             //Se houver drift:
             if ((!(field.equals(""))) && (!(field.equals(" "))) && (!(field.equals("0")))) {
-                drift = Integer.parseInt(field);   //Modifica o valor
+                this.drift = Integer.parseInt(field);   //Modifica o valor
             }
-        }        
-        
     }
     
     /** Método inicial de carregamento da tela.
@@ -202,7 +198,7 @@ public class TelaRelogioController implements Initializable {
             protected Object call() throws Exception {
                 
                 while (true) {   //Contagem ilimitada                    
-                    Thread.sleep(1000);   //No caso, correspondente ao tempo de drift                   
+                    Thread.sleep(drift);   //No caso, correspondente ao tempo de drift                   
                     
                     Platform.runLater(() -> {
                         contador++;   //Variável de controle do tempo
