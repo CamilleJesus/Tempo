@@ -19,11 +19,11 @@ public class Conexao {
     
     private static Conexao Conexao;
     private final int PORTA = 5000;
-    private final String GRUPO = "225.4.5.6";    
+    private final String GRUPO = "225.4.5.9";    
     private MulticastSocket multicast;
     private String nome;
     private String coordenador;
-    private int idCoordenador = 0;
+    
     
     /** Método que inicializa a classe.
      * 
@@ -74,22 +74,7 @@ public class Conexao {
     public void setCoordenador(String coordenador) {
         this.coordenador = coordenador;
     }
-    
-    /** Método que retorna o id do coordenador do grupo.
-     * 
-     * @return idCoordenador
-     */
-    public int getIdCoordenador() {
-        return this.idCoordenador;
-    }
-    
-    /** Método que altera o id do coordenador do grupo.
-     * 
-     * @param idCoordenador 
-     */
-    public void setIdCoordenador(int idCoordenador) {
-        this.idCoordenador = idCoordenador;
-    }
+   
     
     /** Método que conecta ao grupo.
      * 
