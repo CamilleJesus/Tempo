@@ -78,10 +78,9 @@ public class TelaRelogioController implements Initializable {
     private TextField fieldAlteraSegundo;
     @FXML
     private Separator separador;
-    private int drift = 0;
+    private int drift = 0, mili = 0;
     private Integer contador = 0, segundo = 0, minuto = 0, hora = 0;
     private Conexao conexao = Conexao.getInstancia();
-    private int mili = 0;
     
 
     public Integer getHora() {
@@ -196,26 +195,26 @@ public class TelaRelogioController implements Initializable {
             protected Object call() throws Exception {
                 
                 while (true) {   //Contagem ilimitada                    
-
                     mili = 0;
+                    
                     if (!conexao.getNome().equals(conexao.getCoordenador())) {
+                    
                         if (drift >= 0){
                             Thread.sleep(drift);
                         }else{
                             mili += -drift;
                         }
                     }
+                    
                     while (mili < 1000){
                         Thread.sleep(100);   //No caso, correspondente ao tempo de drift
                         mili += 100;
+                        
                         if (conexao.getNome().equals(conexao.getCoordenador())) {
-                            
-                            
-                            conexao.enviar("enviaTempo@" + conexao.getNome() + "@" + hora + "@" + contador+ "@" +mili);
+                            conexao.enviar("enviaTempo@" + conexao.getNome() + "@" + hora + "@" + contador+ "@" + mili);
                         }    
-                        System.out.println("milisegundos: "+mili);
+                        System.out.println("milisegundos: " + mili);
                     }
-
                     
                     Platform.runLater(() -> {
                         contador++;   //Variável de controle do tempo
@@ -249,8 +248,9 @@ public class TelaRelogioController implements Initializable {
     }
     
     public void atualizaTempo(Integer hora, Integer contador, Integer mili) throws InterruptedException {
-        int tempo1 = (this.hora * 60 *60 *1000) + this.contador*1000 + this.mili;
-        int tempo2 = (hora * 60 *60 *1000) + contador *1000 + mili;
+        int tempo1 = (this.hora * 3600 * 1000) + (this.contador * 1000) + this.mili;
+        int tempo2 = (hora * 3600 * 1000) + (contador * 1000) + mili;
+        
         if (tempo1 < tempo2) {
             this.mili = mili;
             this.hora = hora;
@@ -274,9 +274,10 @@ public class TelaRelogioController implements Initializable {
             this.fieldSegundo.setText(this.segundo.toString());
             this.fieldMinuto.setText(this.minuto.toString());
             this.fieldHora.setText(hora.toString());
-        } else if(tempo1 > tempo2){
-            System.err.println("Tempo1: "+tempo1);
-            System.err.println("Tempo2:"+ tempo2);
+        } else if (tempo1 > tempo2){
+            System.err.println("Tempo1: " + tempo1);
+            System.err.println("Tempo2: " + tempo2);
+            
             try {
                 this.conexao.enviar("chamaEleição@" + this.conexao.getNome());
             } catch (UnknownHostException ex) {

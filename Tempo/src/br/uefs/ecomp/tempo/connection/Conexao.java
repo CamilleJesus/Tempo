@@ -48,7 +48,7 @@ public class Conexao {
      */
     
     public String getNome(){
-        return nome;
+        return this.nome;
     }
     
     /** Método que altera o nome do host.

@@ -23,7 +23,7 @@ public class ThreadReceber implements Runnable {
 
     public ThreadReceber(TelaRelogioController relogio) {
         this.relogio = relogio;
-        conexao = Conexao.getInstancia();
+        this.conexao = Conexao.getInstancia();
     }
 
     @Override
@@ -33,23 +33,28 @@ public class ThreadReceber implements Runnable {
 
             try {
                 String cmd = conexao.receber();
-
                 String[] comandos = cmd.split("@");
 
-                if (comandos[0].equals("mestre")) {
-                    mestre(comandos);
-                } else if (comandos[0].equals("enviaTempo")) {
-                    sincronizar(comandos);
-                } else if (comandos[0].equals("chamaEleição")) {
-                    conexao.enviar("concorreEleição@" + comandos[1] + "@" + conexao.getNome() + "@" + this.relogio.getHora() + "@" + this.relogio.getContador() + "@" + this.relogio.getMili());
-                } else if (comandos[0].equals("concorreEleição")) {
-                    eleicao(comandos);
-                } else if (comandos[0].equals("atualizaCoordenador")) {
-
-                    atualizaCoordenador(comandos);
+                switch (comandos[0]) {
+                    case "mestre":
+                        mestre(comandos);
+                        break;
+                    case "enviaTempo":
+                        sincronizar(comandos);
+                        break;
+                    case "chamaEleição":
+                        conexao.enviar("concorreEleição@" + comandos[1] + "@" + conexao.getNome() + "@" + this.relogio.getHora() + "@" + this.relogio.getContador() + "@" + this.relogio.getMili());
+                        break;
+                    case "concorreEleição":
+                        eleicao(comandos);
+                        break;
+                    case "atualizaCoordenador":
+                        atualizaCoordenador(comandos);
+                        break;
+                    default:
+                        break;
                 }
-                System.out.println("Nome: " + conexao.getNome());
-                
+                System.out.println("Nome: " + conexao.getNome());                
                 System.out.println("Coordenador: " + conexao.getCoordenador());
             } catch (SocketTimeoutException exception) {
 
@@ -60,10 +65,8 @@ public class ThreadReceber implements Runnable {
                 } catch (IOException ex) {
                     Logger.getLogger(ThreadReceber.class.getName()).log(Level.SEVERE, null, ex);
                 }
-            } catch (IOException exception) {
+            } catch (IOException | InterruptedException exception) {
                 Logger.getLogger(ThreadReceber.class.getName()).log(Level.SEVERE, null, exception);
-            } catch (InterruptedException ex) {
-                Logger.getLogger(ThreadReceber.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
     }
@@ -79,16 +82,12 @@ public class ThreadReceber implements Runnable {
                 conexao.enviar("mestre@recebeu@" + nome + "@" + conexao.getCoordenador());
             }
         } else if (acao.equals("recebeu")) {
-
             String mestre = comandos[3];
 
             if (nome.equals(conexao.getNome())) {
-
                 conexao.setCoordenador(mestre);
-
             }
         }
-
     }
 
     public void sincronizar(String[] comandos) throws InterruptedException {
@@ -100,24 +99,22 @@ public class ThreadReceber implements Runnable {
 
     public void eleicao(String[] comandos) throws UnknownHostException, IOException {
         String nomeChamouEleicao = comandos[1];
-        String nome = comandos[2];
-       
+        String nome = comandos[2];       
         Integer hora = Integer.parseInt(comandos[3]);
         Integer contador = Integer.parseInt(comandos[4]);
         Integer mili = Integer.parseInt(comandos[5]);
 
-        //if (nomeChamouEleicao.equals(conexao.getNome())) {
+//      if (nomeChamouEleicao.equals(conexao.getNome())) {
 
-            if (((hora * 60 * 60 * 1000) + contador * 1000 + mili) > ((this.maiorHora * 60 * 60 * 1000) + this.maiorContador * 1000 + this.maiorMili)) {
+            if (((hora * 3600 * 1000) + (contador * 1000) + mili) > ((this.maiorHora * 3600 * 1000) + (this.maiorContador) * 1000 + this.maiorMili)) {
                 this.maiorHora = hora;
                 this.maiorContador = contador;
                 this.concorrente = nome;
                 this.maiorMili = mili;
-                conexao.setCoordenador(nome);
-
-                //conexao.enviar("atualizaCoordenador@" + nomeChamouEleicao + "@" + nome);
+                this.conexao.setCoordenador(nome);
+//              conexao.enviar("atualizaCoordenador@" + nomeChamouEleicao + "@" + nome);
             }
-        //}
+//      }
     }
 
     private void atualizaCoordenador(String[] comandos) {
@@ -125,4 +122,5 @@ public class ThreadReceber implements Runnable {
             conexao.setCoordenador(comandos[2]);
         }
     }
+    
 }
