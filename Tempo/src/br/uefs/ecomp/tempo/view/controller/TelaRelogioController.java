@@ -177,7 +177,7 @@ public class TelaRelogioController implements Initializable {
         this.contagem();   //Chama a tarefa
         
         try {
-            this.conexao.enviar("mestre@enviou@" + conexao.getNome());
+            this.conexao.enviar("coordenador@enviou@" + conexao.getNome());
         } catch (UnknownHostException ex) {
             Logger.getLogger(TelaRelogioController.class.getName()).log(Level.SEVERE, null, ex);
         } catch (IOException ex) {
@@ -279,7 +279,7 @@ public class TelaRelogioController implements Initializable {
             System.err.println("Tempo2: " + tempo2);
             
             try {
-                this.conexao.enviar("chamaEleição@" + this.conexao.getNome());
+                this.conexao.enviar("chamaEleicao@" + this.conexao.getNome());
             } catch (UnknownHostException ex) {
                 Logger.getLogger(TelaRelogioController.class.getName()).log(Level.SEVERE, null, ex);
             } catch (IOException ex) {

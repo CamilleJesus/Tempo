@@ -34,16 +34,16 @@ public class ThreadReceber implements Runnable {
                 String[] comandos = (conexao.receber()).split("@");
 
                 switch (comandos[0]) {
-                    case "mestre":
-                        mestre(comandos);
+                    case "coordenador":
+                        atualizaCoordenador(comandos);
                         break;
                     case "enviaTempo":
                         sincronizar(comandos);
                         break;
-                    case "chamaEleição":
-                        conexao.enviar("concorreEleição@" + comandos[1] + "@" + conexao.getNome() + "@" + this.relogio.getHora() + "@" + this.relogio.getContador() + "@" + this.relogio.getMili());
+                    case "chamaEleicao":
+                        conexao.enviar("concorreEleicao@" + comandos[1] + "@" + conexao.getNome() + "@" + this.relogio.getHora() + "@" + this.relogio.getContador() + "@" + this.relogio.getMili());
                         break;
-                    case "concorreEleição":
+                    case "concorreEleicao":
                         eleicao(comandos);
                         break;
                     default:
@@ -54,7 +54,7 @@ public class ThreadReceber implements Runnable {
             } catch (SocketTimeoutException exception) {
 
                 try {
-                    conexao.enviar("chamaEleição@" + conexao.getNome());
+                    conexao.enviar("chamaEleicao@" + conexao.getNome());
                 } catch (UnknownHostException ex) {
                     Logger.getLogger(ThreadReceber.class.getName()).log(Level.SEVERE, null, ex);
                 } catch (IOException ex) {
@@ -66,21 +66,19 @@ public class ThreadReceber implements Runnable {
         }
     }
 
-    public void mestre(String[] comandos) throws UnknownHostException, IOException {
+    public void atualizaCoordenador(String[] comandos) throws UnknownHostException, IOException {
         String acao = comandos[1];
         String nome = comandos[2];
 
         if (acao.equals("enviou")) {
 
             if (!nome.equals(conexao.getNome())) {
-
-                conexao.enviar("mestre@recebeu@" + nome + "@" + conexao.getCoordenador());
+                conexao.enviar("coordenador@recebeu@" + nome + "@" + conexao.getCoordenador());
             }
         } else if (acao.equals("recebeu")) {
-            String mestre = comandos[3];
 
             if (nome.equals(conexao.getNome())) {
-                conexao.setCoordenador(mestre);
+                conexao.setCoordenador(comandos[3]);
             }
         }
     }
@@ -93,8 +91,6 @@ public class ThreadReceber implements Runnable {
     }
 
     public void eleicao(String[] comandos) throws UnknownHostException, IOException {
-//      String nomeChamouEleicao = comandos[1];
-        String nome = comandos[2];       
         Integer hora = Integer.parseInt(comandos[3]);
         Integer contador = Integer.parseInt(comandos[4]);
         Integer mili = Integer.parseInt(comandos[5]);
@@ -103,7 +99,7 @@ public class ThreadReceber implements Runnable {
                 this.maiorHora = hora;
                 this.maiorContador = contador;
                 this.maiorMili = mili;
-                this.conexao.setCoordenador(nome);
+                this.conexao.setCoordenador(comandos[2]);
             }
     }
     
