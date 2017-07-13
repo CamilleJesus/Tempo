@@ -41,7 +41,7 @@ public class ThreadReceber implements Runnable {
                         sincronizar(comandos);
                         break;
                     case "chamaEleicao":
-                        conexao.enviar("concorreEleicao@" + comandos[1] + "@" + conexao.getNome() + "@" + this.relogio.getHora() + "@" + this.relogio.getContador() + "@" + this.relogio.getMili());
+                        conexao.enviar("concorreEleicao@" + conexao.getNome() + "@" + this.relogio.getHora() + "@" + this.relogio.getContador() + "@" + this.relogio.getMili());
                         break;
                     case "concorreEleicao":
                         eleicao(comandos);
@@ -91,15 +91,15 @@ public class ThreadReceber implements Runnable {
     }
 
     public void eleicao(String[] comandos) throws UnknownHostException, IOException {
-        Integer hora = Integer.parseInt(comandos[3]);
-        Integer contador = Integer.parseInt(comandos[4]);
-        Integer mili = Integer.parseInt(comandos[5]);
+        Integer hora = Integer.parseInt(comandos[2]);
+        Integer contador = Integer.parseInt(comandos[3]);
+        Integer mili = Integer.parseInt(comandos[4]);
 
             if (((hora * 3600 * 1000) + (contador * 1000) + mili) > ((this.maiorHora * 3600 * 1000) + (this.maiorContador) * 1000 + this.maiorMili)) {
                 this.maiorHora = hora;
                 this.maiorContador = contador;
                 this.maiorMili = mili;
-                this.conexao.setCoordenador(comandos[2]);
+                this.conexao.setCoordenador(comandos[1]);
             }
     }
     

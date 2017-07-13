@@ -279,7 +279,7 @@ public class TelaRelogioController implements Initializable {
             System.err.println("Tempo2: " + tempo2);
             
             try {
-                this.conexao.enviar("chamaEleicao@" + this.conexao.getNome());
+                this.conexao.enviar("chamaEleicao@");
             } catch (UnknownHostException ex) {
                 Logger.getLogger(TelaRelogioController.class.getName()).log(Level.SEVERE, null, ex);
             } catch (IOException ex) {
