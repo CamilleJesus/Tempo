@@ -7,6 +7,8 @@ import java.net.InetAddress;
 
 import javafx.application.Application;
 import static javafx.application.Application.launch;
+import javafx.application.Platform;
+import javafx.event.EventHandler;
 
 import javafx.fxml.FXMLLoader;
 
@@ -14,6 +16,7 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 
 import javafx.stage.Stage;
+import javafx.stage.WindowEvent;
 
 import javax.swing.JOptionPane;
 
@@ -34,6 +37,15 @@ public class TelaRelogio extends Application {
      */
     @Override
     public void start(Stage stage) throws Exception {
+        
+        stage.setOnCloseRequest(new EventHandler<WindowEvent>() {
+            
+            @Override
+            public void handle(WindowEvent event) {
+                Platform.exit();
+                System.exit(0);
+            }
+        });
         //Chama o arquivo FXML correpondente:
         Parent root = FXMLLoader.load(getClass().getResource("TelaRelogio.fxml"));      
         Scene scene = new Scene(root);

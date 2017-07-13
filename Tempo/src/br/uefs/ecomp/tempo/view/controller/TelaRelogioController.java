@@ -199,14 +199,14 @@ public class TelaRelogioController implements Initializable {
                     
                     if (!conexao.getNome().equals(conexao.getCoordenador())) {
                     
-                        if (drift >= 0){
+                        if (drift >= 0) {
                             Thread.sleep(drift);
-                        }else{
+                        } else {
                             mili += -drift;
                         }
                     }
                     
-                    while (mili < 1000){
+                    while (mili < 1000) {
                         Thread.sleep(100);   //No caso, correspondente ao tempo de drift
                         mili += 100;
                         
